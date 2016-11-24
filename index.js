@@ -13,7 +13,9 @@ var path = require('path');
 var serveStatic = require('serve-static');
 var miniTools = require('mini-tools');
 
-exports = module.exports = function serveContent(root, options) {
+
+
+function serveContent(root, options) {
   if (!options) {
     throw new TypeError('options required')
   }
@@ -29,19 +31,28 @@ exports = module.exports = function serveContent(root, options) {
   return function servingContent(req, res, next){
     var pathname = req.path || parseurl(req).pathname
     var ext = path.extname(pathname).replace(/^\.?/,'');
-    if(ext===''){
-        return miniTools.serveJade(root, true)(req, res, function(err){
+    if(staticExtensions.indexOf(ext)==-1) return next();
+    if(ext && !exports.mime.types[ext]) return next();
+    var transformer = serveContent.transformer[ext];
+    if(transformer){
+        return miniTools[transformer](root, true)(req, res, function(err){
+            /* istanbul ignore next */
             if(err){
                 return next(err);
             }
             return wichServeStatic(req, res, next);
         });
     }else{
-        if(staticExtensions.indexOf(ext)==-1) return next();
-        if(ext && !exports.mime.types[ext]) return next();
         return wichServeStatic(req, res, next);
     }
   }
 }
 
-exports.mime = serveStatic.mime
+serveContent.transformer={
+    '': 'serveJade',
+    css: 'serveStylus'
+}
+
+serveContent.mime = serveStatic.mime;
+ 
+exports = module.exports = serveContent;

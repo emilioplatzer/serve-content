@@ -16,7 +16,7 @@ describe('serveContent()', function(){
   describe('basic operations', function(){
     var server;
     before(function () {
-      server = createServer(null,{staticExtensions:['','txt','png','html','php','specialtext'], extensions:['html']});
+      server = createServer(null,{staticExtensions:['','txt','png','html','php','specialtext','css'], extensions:['html']});
     });
 
     it('should serve static files', function(done){
@@ -101,7 +101,7 @@ describe('serveContent()', function(){
     it('should serve stylus files', function(done){
       request(server)
       .get('/a-stylus.css')
-      .expect(200, 'p{color:red}', done);
+      .expect(200, 'p {\n  color: #123;\n}\n', done);
     });
   })
 });
