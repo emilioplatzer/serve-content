@@ -1,6 +1,7 @@
+"use strict";
 /*!
  * serve-content
- * 2015-2016 Emilio Platzer
+ * 2015-2017 Emilio Platzer
  * GNU Licensed
  */
 
@@ -12,8 +13,6 @@ var parseurl = require('parseurl');
 var path = require('path');
 var serveStatic = require('serve-static');
 var miniTools = require('mini-tools');
-
-
 
 function serveContent(root, options) {
   if (!options) {
