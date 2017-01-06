@@ -12,9 +12,9 @@ serve-content based on file name extensions and serving jade and stylus files
 All in [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme) is working here. 
 But *serve-content* add one mandatory [parameter](https://www.npmjs.com/package/serve-static#options): 
 
-## staticExtensions
+## allowedExts
 
-*staticExtensions* is a white list of extensions names for serve, this allows something like this:
+*allowedExts* is a white list of extensions names for serve, this allows something like this:
 
 ```js
 var connect = require('connect')
@@ -26,7 +26,7 @@ var app = connect()
 app.use(serveContent('/', {
     extensions: ['html', 'htm'], 
     index: 'index.html', 
-    staticExtensions: ['', 'html', 'htm', 'png', 'jpg', 'jpeg', 'gif']
+    allowedExts: ['', 'html', 'htm', 'png', 'jpg', 'jpeg', 'gif']
 })
 
 // Listen
@@ -57,7 +57,7 @@ var app = connect()
 app.use(serveContent('/', {
     extensions: ['html', 'htm'], 
     index: 'index.html', 
-    staticExtensions: ['', 'html', 'htm', 'png', 'jpg', 'jpeg', 'gif', 'specialimage']
+    allowedExts: ['', 'html', 'htm', 'png', 'jpg', 'jpeg', 'gif', 'specialimage']
 })
 
 // Listen

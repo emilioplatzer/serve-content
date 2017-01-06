@@ -15,8 +15,10 @@ describe('serveContent()', function(){
   
   describe('basic operations', function(){
     var server;
+    var serverPng;
     before(function () {
-      server = createServer(null,{staticExtensions:['','txt','png','html','php','specialtext','css'], extensions:['html']});
+      server = createServer(null,{allowedExts:['','txt','png','html','php','specialtext','css'], extensions:['html']});
+      serverPng = createServer(null,{allowedExts:['png']});
     });
 
     it('should serve static files', function(done){
@@ -82,8 +84,8 @@ describe('serveContent()', function(){
       assert.throws(serveContent.bind(null,'/'), /options required/);
     });
 
-    it('should require staticExtensions', function(){
-      assert.throws(serveContent.bind(null,'/',{}), /options.staticExtensions required/);
+    it('should require allowedExts', function(){
+      assert.throws(serveContent.bind(null,'/',{}), /options.allowedExts required/);
     });
 
     it('should serve html without extension', function(done){
@@ -102,6 +104,12 @@ describe('serveContent()', function(){
       request(server)
       .get('/a-stylus.css')
       .expect(200, 'p {\n  color: #123;\n}\n', done);
+    });
+
+    it('should reject stylus files if not allowed', function(done){
+      request(serverPng)
+      .get('/a-jade')
+      .expect(404, 'sorry!', done);
     });
   })
 });

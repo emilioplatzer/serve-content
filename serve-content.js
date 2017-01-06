@@ -18,11 +18,11 @@ function serveContent(root, options) {
   if (!options) {
     throw new TypeError('options required')
   }
-  if (!options.staticExtensions) {
-    throw new TypeError('options.staticExtensions required')
+  if (!options.allowedExts) {
+    throw new TypeError('options.allowedExts required')
   }
-  var staticExtensions=options.staticExtensions;
-  delete options.staticExtensions;
+  var allowedExts=options.allowedExts;
+  delete options.allowedExts;
   
   var wichServeStatic = options.serveStatic || serveStatic(root,options); // Can change how to ServeStatic
   
@@ -30,7 +30,7 @@ function serveContent(root, options) {
   return function servingContent(req, res, next){
     var pathname = req.path || parseurl(req).pathname
     var ext = path.extname(pathname).replace(/^\.?/,'');
-    if(staticExtensions.indexOf(ext)==-1) return next();
+    if(allowedExts.indexOf(ext)==-1) return next();
     if(ext && !exports.mime.types[ext]) return next();
     var transformer = serveContent.transformer[ext];
     if(transformer){
