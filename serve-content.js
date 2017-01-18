@@ -13,6 +13,7 @@ var parseurl = require('parseurl');
 var path = require('path');
 var serveStatic = require('serve-static');
 var miniTools = require('mini-tools');
+var changing = require('best-globals').changing;
 
 function serveContent(root, options) {
   if (!options) {
@@ -24,7 +25,7 @@ function serveContent(root, options) {
   var allowedExts=options.allowedExts;
   delete options.allowedExts;
   
-  var wichServeStatic = options.serveStatic || serveStatic(root,options); // Can change how to ServeStatic
+  var whichServeStatic = options.serveStatic || serveStatic(root,options); // Can change how to ServeStatic
   
   root = path.resolve(root);
   return function servingContent(req, res, next){
@@ -34,22 +35,22 @@ function serveContent(root, options) {
     if(ext && !exports.mime.types[ext]) return next();
     var transformer = serveContent.transformer[ext];
     if(transformer){
-        return miniTools[transformer](root, true)(req, res, function(err){
+        return miniTools[transformer.name](root, changing(options[transformer.optionName]||{}, {anyFile:true}))(req, res, function(err){
             /* istanbul ignore next */
             if(err){
                 return next(err);
             }
-            return wichServeStatic(req, res, next);
+            return whichServeStatic(req, res, next);
         });
     }else{
-        return wichServeStatic(req, res, next);
+        return whichServeStatic(req, res, next);
     }
   }
 }
 
 serveContent.transformer={
-    '': 'serveJade',
-    css: 'serveStylus'
+    '' : {name:'serveJade'   , optionName:'jade'},
+    css: {name:'serveStylus' , optionName:'styl'},
 }
 
 serveContent.mime = serveStatic.mime;
