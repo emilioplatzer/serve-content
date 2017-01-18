@@ -23,7 +23,6 @@ function serveContent(root, options) {
     throw new TypeError('options.allowedExts required')
   }
   var allowedExts=options.allowedExts;
-  delete options.allowedExts;
   
   var whichServeStatic = options.serveStatic || serveStatic(root,changing(options, {allowedExts:undefined}, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
   
