@@ -25,7 +25,7 @@ function serveContent(root, options) {
   var allowedExts=options.allowedExts;
   delete options.allowedExts;
   
-  var whichServeStatic = options.serveStatic || serveStatic(root,options); // Can change how to ServeStatic
+  var whichServeStatic = options.serveStatic || serveStatic(root,changing(options, {allowedExts:undefined}, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
   
   root = path.resolve(root);
   return function servingContent(req, res, next){
