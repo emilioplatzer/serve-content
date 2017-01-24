@@ -34,7 +34,14 @@ function serveContent(root, options) {
     if(ext && !exports.mime.types[ext]) return next();
     var transformer = serveContent.transformer[ext];
     if(transformer){
-        return miniTools[transformer.name](root, changing(options[transformer.optionName]||{}, {anyFile:true}))(req, res, function(err){
+         var defaultOpts={anyFile:true};
+        if(transformer.withFlash){
+            defaultOpts.flash = {};
+            if(req.flash instanceof Function){
+                defaultOpts.flash = req.flash();
+            }
+        }
+        return miniTools[transformer.name](root, changing(defaultOpts, options[transformer.optionName]||{}))(req, res, function(err){
             /* istanbul ignore next */
             if(err){
                 return next(err);
