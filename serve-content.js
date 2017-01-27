@@ -29,13 +29,13 @@ serveContent = function serveContent(root, options) {
         traceForDebug = getTraceroute();
     }
     var whichServeStatic = options.serveStatic || serveStatic(root,changing(options, {allowedExts:undefined}, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
-    root = path.resolve(root);
+    root = Path.resolve(root);
     return function servingContent(req, res, next){
         if(req.method!='GET'){
             return next();
         }
         var pathname = req.path || parseurl(req).pathname
-        var ext = path.extname(pathname).replace(/^\.?/,'');
+        var ext = Path.extname(pathname).replace(/^\.?/,'');
         if(allowedExts.indexOf(ext)==-1) return next();
         if(ext && !exports.mime.types[ext]) return next();
         var transformer = serveContent.transformer[ext];
