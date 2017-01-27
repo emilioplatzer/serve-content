@@ -7,7 +7,6 @@
   "repository": "emilioplatzer/serve-content",
   "main": "serve-content.js",
   "files": [
-    "LICENSE",
     "serve-content.js"
   ],
   "dependencies": {
@@ -30,5 +29,11 @@
     "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
     "start": "node example/server.js"
+  },
+  "qa-control": {
+    "package-version": "0.3.0",
+    "run-in": "server",
+    "test-appveyor": true,
+    "type": "lib"
   }
 }
