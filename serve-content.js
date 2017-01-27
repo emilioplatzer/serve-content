@@ -1,16 +1,9 @@
 "use strict";
-/*!
- * serve-content
- * 2015-2017 Emilio Platzer
- * GNU Licensed
- */
 
-/**
- * Module dependencies.
- */
+var serveContent = {};
 
 var parseurl = require('parseurl');
-var path = require('path');
+var Path = require('path');
 var serveStatic = require('serve-static');
 var miniTools = require('mini-tools');
 var changing = require('best-globals').changing;
@@ -23,7 +16,7 @@ function getTraceroute(){
     }
 }
 
-function serveContent(root, options) {
+serveContent = function serveContent(root, options) {
     var traceForDebug;
     if (!options) {
       throw new TypeError('options required')
@@ -35,9 +28,7 @@ function serveContent(root, options) {
     if(serveContent.logAll){
         traceForDebug = getTraceroute();
     }
-    
     var whichServeStatic = options.serveStatic || serveStatic(root,changing(options, {allowedExts:undefined}, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
-    
     root = path.resolve(root);
     return function servingContent(req, res, next){
         if(req.method!='GET'){
