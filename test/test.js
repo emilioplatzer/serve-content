@@ -17,7 +17,7 @@ describe('serveContent()', function(){
     var server;
     var serverPng;
     before(function () {
-      server = createServer(null,{allowedExts:['','txt','png','html','php','specialtext','css'], extensions:['html']});
+      server = createServer(null,{allowedExts:['','txt','png','html','php','php2','specialtext','css'], extensions:['html']});
       serverPng = createServer(null,{allowedExts:['png']});
     });
 
@@ -68,7 +68,7 @@ describe('serveContent()', function(){
 
     it('should skip not mimed extensions', function(done){
       request(server)
-      .get('/a_program.php')
+      .get('/a_program.php2')
       .expect(404, 'sorry!', done);
     });
 
