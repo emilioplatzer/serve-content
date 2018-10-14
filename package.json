@@ -21,7 +21,7 @@
     "supertest": "~3.3.0"
   },
   "engines": {
-    "node": ">= 4"
+    "node": ">= 8"
   },
   "scripts": {
     "test": "mocha --reporter spec --bail --check-leaks --globals __core-js_shared__ test/",
