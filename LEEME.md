@@ -24,14 +24,16 @@ también disponible en:
 ## basado en serve-static
 
 Tiene todo lo que tiene [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme). 
-El módulo *serve-content* agrega un [parameter](https://www.npmjs.com/package/serve-static#options) obligatorio: 
+El módulo *serve-content* agrega un conjunto de [parametros](https://www.npmjs.com/package/serve-static#options) obligatorios 
+para indicar cuáles son las extensiones permitidas (o las excluidas): 
 
 <!--lang:en--]
 
 ## based on serve-static
 
 All in [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme) is working here. 
-But *serve-content* add one mandatory [parameter](https://www.npmjs.com/package/serve-static#options): 
+But *serve-content* add some mandatory [parameters](https://www.npmjs.com/package/serve-static#options) 
+to indicate which are the allowed extensions: 
 
 [!--lang:*-->
 
@@ -43,9 +45,42 @@ But *serve-content* add one mandatory [parameter](https://www.npmjs.com/package/
 
 <!--lang:en--]
 
-*allowedExts* is a white list of extensions names for serve, this allows something like this:
+*allowedExts* is a white list of extensions names for serve.
 
 [!--lang:*-->
+
+## allowAllExts
+
+<!--lang:es-->
+
+*allowAllExts* indica que todas las exensiones se permiten, se puede usar junto con `excludeExts`. 
+
+<!--lang:en--]
+
+*allowAllExts* is a boolean. True means that all extensions are allowed. It can be used with `excludeExts`.
+
+[!--lang:*-->
+
+## excludeExts
+
+<!--lang:es-->
+
+*excludeExts* es una lista de extensiones que se ignorarán. 
+
+<!--lang:en--]
+
+*allowedExts* is a black list with ignorings extensions.
+
+<!--lang:es-->
+
+# ejemplo de uso
+
+<!--lang:en--]
+
+# example
+
+[!--lang:*-->
+
 
 ```js
 var connect = require('connect')

@@ -15,10 +15,10 @@ describe('serveContent()', function(){
   
   describe('basic operations', function(){
     var server;
-    var serverPng;
+    var serverExcl;
     before(function () {
       server = createServer(null,{allowedExts:['','txt','png','html','php','php2','specialtext','css'], extensions:['html']});
-      serverPng = createServer(null,{allowedExts:['png']});
+      serverExcl = createServer(null,{allowAllExts:true, excludeExts:['']});
     });
 
     it('should serve static files', function(done){
@@ -100,6 +100,12 @@ describe('serveContent()', function(){
       .expect(200, '<p>hello</p>', done);
     });
 
+    it.skip('should serve markdown files files', function(done){
+      request(server)
+      .get('/a-markdown')
+      .expect(200, '<h1>title</h1>', done);
+    });
+
     it('should serve stylus files', function(done){
       request(server)
       .get('/a-stylus.css')
@@ -107,9 +113,16 @@ describe('serveContent()', function(){
     });
 
     it('should reject stylus files if not allowed', function(done){
-      request(serverPng)
+      request(serverExcl)
       .get('/a-jade')
       .expect(404, 'sorry!', done);
+    });
+
+    it('should serve all not excluded', function(done){
+      request(serverExcl)
+      .get('/ok.png')
+      .expect('Content-Type', 'image/png')
+      .expect(200, done);
     });
   })
 });

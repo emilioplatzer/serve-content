@@ -20,13 +20,30 @@ also available in:
 ## based on serve-static
 
 All in [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme) is working here.
-But *serve-content* add one mandatory [parameter](https://www.npmjs.com/package/serve-static#options):
+But *serve-content* add some mandatory [parameters](https://www.npmjs.com/package/serve-static#options)
+to indicate which are the allowed extensions:
 
 
 ## allowedExts
 
 
-*allowedExts* is a white list of extensions names for serve, this allows something like this:
+*allowedExts* is a white list of extensions names for serve.
+
+
+## allowAllExts
+
+
+*allowAllExts* is a boolean. True means that all extensions are allowed. It can be used with `excludeExts`.
+
+
+## excludeExts
+
+
+*allowedExts* is a black list with ignorings extensions.
+
+
+# example
+
 
 
 ```js

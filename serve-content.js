@@ -21,22 +21,29 @@ serveContent = function serveContent(root, options) {
     if (!options) {
       throw new TypeError('options required')
     }
-    if (!options.allowedExts) {
+    if (!options.allowedExts && !options.allowAllExts) {
       throw new TypeError('options.allowedExts required')
     }
-    var allowedExts=options.allowedExts;
+    var allowedExts=options.allowedExts||[];
+    var excludeExts=options.excludeExts||[];
     if(serveContent.logAll){
         traceForDebug = getTraceroute();
     }
-    var whichServeStatic = options.serveStatic || serveStatic(root,changing(options, {allowedExts:undefined}, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
+    var whichServeStatic = options.serveStatic ||
+        serveStatic(root,changing(options, {
+            allowedExts:undefined, 
+            allowAllExts:undefined, 
+            excludeExts:undefined, 
+        }, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
     root = Path.resolve(root);
     return function servingContent(req, res, next){
         if(req.method!='GET'){
             return next();
         }
-        var pathname = req.path || parseurl(req).pathname
+        var pathname = req.path || parseurl(req).pathname;
         var ext = Path.extname(pathname).replace(/^\.?/,'');
-        if(allowedExts.indexOf(ext)==-1) return next();
+        // ok cuando excludeExts.indexOf(ext)==-1 && (opt.allowAllExts || allowedExts.indexOf(ext)!=-1)
+        if(excludeExts.indexOf(ext)!=-1 || (!options.allowAllExts && allowedExts.indexOf(ext)==-1)) return next();
         if(ext && !exports.mime.types[ext]) return next();
         var transformer = serveContent.transformer[ext];
         if(transformer){
