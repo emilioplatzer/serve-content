@@ -51,7 +51,12 @@ serveContent = function serveContent(root, options) {
             if(transformer.withFlash){
                 defaultOpts.flash = {};
                 if(req.flash instanceof Function){
-                    defaultOpts.flash = req.flash();
+                    var newFlash = req.flash() || {};
+                    for(var x in newFlash){
+                        req.serveContentFlash = newFlash;
+                        break;
+                    }
+                    defaultOpts.flash = req.serveContentFlash || {};
                 }
             }
             if(serveContent.logAll){

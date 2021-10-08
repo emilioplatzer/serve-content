@@ -169,7 +169,7 @@ describe('direct test', function(){
       headers:{},
       flash:opts.flash ?? (opts.flashContent?function flash(){
         var content = this.flashContent;
-        this.flashContent = null;
+        this.flashContent = {};
         return content;
       }:null),
       // path:opts.path??opts.url,
@@ -199,7 +199,7 @@ describe('direct test', function(){
     assert.equal(response.statusCode, 200);
     assert.equal(response.outputString, '<p>hello flash</p><pre>first line</pre><pre>second line</pre>');
   });
-  it.skip('should serve jade files with flash when found', async function(){
+  it('should serve jade files with flash when found', async function(){
     try{
       await fs.unlink(fixtures+'/local-non-existent-jade.jade')
     }catch(err){
@@ -217,13 +217,6 @@ describe('direct test', function(){
   it('logAll', async function(){
     serveContent.logAll = true;
     await serve(req({url:'/a-jade'/*, flashContent:{xerror:['first line','second line']}*/}))
-
-    // var response = await serve(req({url:'/flash-jade'/*, flashContent:{xerror:['first line','second line']}*/}))
-    // var response = await serve(req({url:'/flash-jade'/*, flashContent:{xerror:['first line','second line']}*/}))
-    // var response = await serve(req({url:'/flash-jade'/*, flashContent:{xerror:['first line','second line']}*/}))
-    // assert.equal(response.next, null);
-    // assert.equal(response.statusCode, 200);
-    // assert.equal(response.outputString, '<p>hello flash</p><pre>first line</pre><pre>second line</pre>');
   });
 })
 
