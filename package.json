@@ -23,7 +23,7 @@
     "@types/serve-static": "^1.13.9"
   },
   "engines": {
-    "node": ">= 8"
+    "node": ">= 14"
   },
   "scripts": {
     "test": "mocha --reporter spec --bail --check-leaks --globals __core-js_shared__ test/",

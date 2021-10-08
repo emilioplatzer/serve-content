@@ -7,9 +7,7 @@ serve-content based on file name extensions and serving jade and stylus files
 [![downloads](https://img.shields.io/npm/dm/serve-content.svg)](https://npmjs.org/package/serve-content)
 [![linux](https://img.shields.io/travis/emilioplatzer/serve-content/master.svg)](https://travis-ci.org/emilioplatzer/serve-content)
 [![windows](https://ci.appveyor.com/api/projects/status/github/emilioplatzer/serve-content?svg=true)](https://ci.appveyor.com/project/emilioplatzer/serve-content)
-[![climate](https://img.shields.io/codeclimate/github/emilioplatzer/serve-content.svg)](https://codeclimate.com/github/emilioplatzer/serve-content)
 [![dependencies](https://img.shields.io/david/emilioplatzer/serve-content.svg)](https://david-dm.org/emilioplatzer/serve-content)
-[![qa-control](http://codenautas.com/github/emilioplatzer/serve-content.svg)](http://codenautas.com/github/emilioplatzer/serve-content)
 
 
 language: ![English](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-en.png)

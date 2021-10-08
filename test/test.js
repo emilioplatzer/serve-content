@@ -8,6 +8,7 @@ var serveContent = require('..');
 var ServerResponse = require('http').ServerResponse;
 
 var fixtures = __dirname + '/fixtures';
+var fs = require('fs').promises
 var relative = path.relative(process.cwd(), fixtures);
 
 describe('test with supertest server', function(){
@@ -128,40 +129,49 @@ describe('test with supertest server', function(){
 describe('direct test', function(){
   async function serve(req){
     return new Promise(function(resolve, reject){
-      var response = new ServerResponse(req);
-      var res = new Proxy(response, {
-        get: function(target, p, receiver){
-          // console.log('get res', p)
-          if(p=='end'){
-            var endFun = Reflect.get(...arguments);
-            return function endWrapped(){
-              var endResult = endFun.apply(this, arguments);
-              // console.log('*******************')
-              var text = response.outputData.slice(1).map(x => x.data.toString(x.encoding||'utf8')).join('')
-              // response.outputString = text.replace(/^.*\r?\n\r?\n/m,'');
-              response.outputString = text;
-              // console.log(text)
-              // console.log('-------------------')
-              // console.log(response.outputString)
-              // console.log('===================')
-              resolve(response)
-              return endResult;
+      try{
+        var response = new ServerResponse(req);
+        var res = new Proxy(response, {
+          get: function(target, p, receiver){
+            // console.log('get res', p)
+            if(p=='end'){
+              var endFun = Reflect.get(...arguments);
+              return function endWrapped(){
+                var endResult = endFun.apply(this, arguments);
+                // console.log('*******************')
+                var text = response.outputData.slice(1).map(x => x.data.toString(x.encoding||'utf8')).join('')
+                // response.outputString = text.replace(/^.*\r?\n\r?\n/m,'');
+                response.outputString = text;
+                // console.log(text)
+                // console.log('-------------------')
+                // console.log(response.outputString)
+                // console.log('===================')
+                resolve(response)
+                return endResult;
+              }
             }
+            return Reflect.get(...arguments);
           }
-          return Reflect.get(...arguments);
+        })
+        var next = function(...args){
+          console.log('next', args)
+          resolve({next:args})
         }
-      })
-      var next = function(){
-        console.log('next', arguments)
-        resolve({next:arguments})
+        serveContent(fixtures,{allowedExts:['','txt','png','html','php','php2','specialtext','css'], extensions:['html']})(req, res, next);
+      }catch(err){
+        reject(err)
       }
-      serveContent(fixtures,{allowedExts:['','txt','png','html','php','php2','specialtext','css'], extensions:['html']})(req, res, next);
     })
   }
   function req(opts){
     return {
       method:'GET',
       headers:{},
+      flash:opts.flash ?? (opts.flashContent?function flash(){
+        var content = this.flashContent;
+        this.flashContent = null;
+        return content;
+      }:null),
       // path:opts.path??opts.url,
       ...opts
     }
@@ -182,6 +192,27 @@ describe('direct test', function(){
     assert.equal(response.next, null);
     assert.equal(response.statusCode, 200);
     assert.equal(response.outputString, '<p>hello</p>');
+  });
+  it('should serve jade files with flash', async function(){
+    var response = await serve(req({url:'/flash-jade', flashContent:{error:['first line','second line']}}))
+    assert.equal(response.next, null);
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.outputString, '<p>hello flash</p><pre>first line</pre><pre>second line</pre>');
+  });
+  it('should serve jade files with flash when found', async function(){
+    try{
+      await fs.unlink(fixtures+'/local-non-existent-jade.jade')
+    }catch(err){
+      if(err.code != 'ENOENT') throw err;
+    }
+    var reqWithFlash = req({url:'/local-non-existent-jade', flashContent:{error:['first line','second line']}})
+    var next = await serve(reqWithFlash)
+    assert.deepEqual(next.next, []);
+    await fs.copyFile(fixtures+'/flash-jade.jade', fixtures+'/local-non-existent-jade.jade')
+    var response = await serve(reqWithFlash)
+    assert.deepEqual(response.next, null);
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.outputString, '<p>hello flash</p><pre>first line</pre><pre>second line</pre>');
   });
 })
 
