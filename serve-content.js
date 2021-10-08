@@ -58,6 +58,7 @@ serveContent = function serveContent(root, options) {
                 defaultOpts.trace = traceForDebug;
             }
             return miniTools[transformer.name](root, changing(defaultOpts, options[transformer.optionName]||{}))(req, res, function(err){
+                /* istanbul ignore next */
                 if(err){
                     return next(err);
                 }
