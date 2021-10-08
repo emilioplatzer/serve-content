@@ -131,12 +131,22 @@ describe('direct test', function(){
       var response = new ServerResponse(req);
       var res = new Proxy(response, {
         get: function(target, p, receiver){
-          console.log('get res', p)
+          // console.log('get res', p)
           if(p=='end'){
-            var text = response.outputData.slice(1).map(x => x.data.toString(x.encoding||'utf8')).join('')
-            // response.outputString = text.replace(/^.*\r?\n\r?\n/m,'');
-            response.outputString = text;
-            resolve(response)
+            var endFun = Reflect.get(...arguments);
+            return function endWrapped(){
+              var endResult = endFun.apply(this, arguments);
+              // console.log('*******************')
+              var text = response.outputData.slice(1).map(x => x.data.toString(x.encoding||'utf8')).join('')
+              // response.outputString = text.replace(/^.*\r?\n\r?\n/m,'');
+              response.outputString = text;
+              // console.log(text)
+              // console.log('-------------------')
+              // console.log(response.outputString)
+              // console.log('===================')
+              resolve(response)
+              return endResult;
+            }
           }
           return Reflect.get(...arguments);
         }
@@ -152,15 +162,26 @@ describe('direct test', function(){
     return {
       method:'GET',
       headers:{},
+      // path:opts.path??opts.url,
       ...opts
     }
   }
-  it.only('should serve html without extension', async function(){
+  it('should support nesting', async function(){
+    var response = await serve(req({url:'/users/tobi.txt'}))
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.outputString,'ferret');
+  });
+  it('should serve html without extension', async function(){
     var response = await serve(req({url:'/todo'}))
     assert.equal(response.next, null);
-    console.log(response)
     assert.equal(response.statusCode, 200);
     assert.equal(response.outputString, '<li>groceries</li>');
+  });
+  it('should serve jade files', async function(){
+    var response = await serve(req({url:'/a-jade'}))
+    assert.equal(response.next, null);
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.outputString, '<p>hello</p>');
   });
 })
 
