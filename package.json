@@ -24,7 +24,7 @@
     "@types/serve-static": "^1.15.7"
   },
   "engines": {
-    "node": ">= 14"
+    "node": ">= 20"
   },
   "scripts": {
     "test": "mocha --reporter spec --bail --check-leaks --globals __core-js_shared__ test/",
