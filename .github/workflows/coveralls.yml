@@ -1,6 +1,10 @@
-on: ["push", "pull_request"]
-
 name: Test Coveralls
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
 
 jobs:
 
