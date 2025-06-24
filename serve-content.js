@@ -5,6 +5,7 @@ var serveContent = {};
 var parseurl = require('parseurl');
 var Path = require('path');
 var serveStatic = require('serve-static');
+var mime = require('mime');
 var miniTools = require('mini-tools');
 var changing = require('best-globals').changing;
 
@@ -44,9 +45,10 @@ serveContent = function serveContent(root, options) {
         var ext = Path.extname(pathname).replace(/^\.?/,'');
         // ok cuando excludeExts.indexOf(ext)==-1 && (opt.allowAllExts || allowedExts.indexOf(ext)!=-1)
         if(excludeExts.indexOf(ext)!=-1 || (!options.allowAllExts && allowedExts.indexOf(ext)==-1)) return next();
-        if(ext && !exports.mime.types[ext]) return next();
-        var transformer = serveContent.transformer[ext];
-        if(transformer){
+        if(ext && !mime.getType(ext)) return next();
+        var transformers = serveContent.transformer[ext];
+        var transformers = transformers ? (transformers instanceof Array ? transformers : [transformers]) : [];
+        return transformers.reduce(function(andThen, transformer){
             var defaultOpts={anyFile:true};
             if(transformer.withFlash){
                 defaultOpts.flash = {};
@@ -62,25 +64,28 @@ serveContent = function serveContent(root, options) {
             if(serveContent.logAll){
                 defaultOpts.trace = traceForDebug;
             }
-            return miniTools[transformer.name](root, changing(defaultOpts, options[transformer.optionName]||{}))(req, res, function(err){
-                /* istanbul ignore next */
-                if(err){
-                    return next(err);
-                }
-                return whichServeStatic(req, res, next);
-            });
-        }else{
-            return whichServeStatic(req, res, next);
-        }
+            return function(req, res, next){
+                return miniTools[transformer.name](root, changing(defaultOpts, options[transformer.optionName]||{}))(req, res, function(err){
+                    /* istanbul ignore next */
+                    if(err){
+                        return next(err);
+                    }
+                    return andThen(req, res, next);
+                });
+            }
+        }, whichServeStatic)(req, res, next);
     }
 }
 
 serveContent.transformer={
-    '' : {name:'serveJade'   , optionName:'jade', withFlash:true},
+    '' : [
+        {name:'serveJade'    , optionName:'jade', withFlash:true},
+        {name:'serveMarkdown', optionName:'md', withFlash:true}
+    ],
     css: {name:'serveStylus' , optionName:'styl'},
-}
+};
 
-serveContent.mime = serveStatic.mime;
+serveContent.mime = mime;
 
 serveContent.logAll = false;
 
