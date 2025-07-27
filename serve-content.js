@@ -5,7 +5,7 @@ var serveContent = {};
 var parseurl = require('parseurl');
 var Path = require('path');
 var serveStatic = require('serve-static');
-var mime = require('mime');
+var mime = require('mime-types');
 var miniTools = require('mini-tools');
 var changing = require('best-globals').changing;
 
@@ -45,7 +45,7 @@ serveContent = function serveContent(root, options) {
         var ext = Path.extname(pathname).replace(/^\.?/,'');
         // ok cuando excludeExts.indexOf(ext)==-1 && (opt.allowAllExts || allowedExts.indexOf(ext)!=-1)
         if(excludeExts.indexOf(ext)!=-1 || (!options.allowAllExts && allowedExts.indexOf(ext)==-1)) return next();
-        if(ext && !mime.getType(ext)) return next();
+        if(ext && !mime.types[ext]) return next();
         var transformers = serveContent.transformer[ext];
         var transformers = transformers ? (transformers instanceof Array ? transformers : [transformers]) : [];
         return transformers.reduce(function(andThen, transformer){
