@@ -1,7 +1,7 @@
 {
   "name": "serve-content",
   "description": "Serve static files based on file name extensions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Emilio Platzer <emilioplatzer@gmail.com>",
   "license": "MIT",
   "repository": "emilioplatzer/serve-content",
