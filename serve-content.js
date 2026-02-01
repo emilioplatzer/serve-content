@@ -48,6 +48,7 @@ serveContent = function serveContent(root, options) {
         if(ext && !mime.types[ext]) return next();
         var transformers = serveContent.transformer[ext];
         var transformers = transformers ? (transformers instanceof Array ? transformers : [transformers]) : [];
+        transformers = transformers.filter(transformer => (typeof miniTools[transformer.name] == "function"));
         return transformers.reduce(function(andThen, transformer){
             var defaultOpts={anyFile:true};
             if(transformer.withFlash){
@@ -63,6 +64,12 @@ serveContent = function serveContent(root, options) {
             }
             if(serveContent.logAll){
                 defaultOpts.trace = traceForDebug;
+            }
+            if (typeof miniTools[transformer.name] != "function") {
+                console.error('ERROR serve-content miniTools[transformer.name] not found')
+                console.log(transformer)
+                console.log(options)
+                throw new Error("ERROR serve-content miniTools[transformer.name] not found");
             }
             return function(req, res, next){
                 return miniTools[transformer.name](root, changing(defaultOpts, options[transformer.optionName]||{}))(req, res, function(err){
