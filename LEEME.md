@@ -4,12 +4,13 @@
 serve-content based on file name extensions and serving jade and stylus files
 
 <!-- cucardas -->
-![extending](https://img.shields.io/badge/stability-extending-orange.svg)
 [![npm-version](https://img.shields.io/npm/v/serve-content.svg)](https://npmjs.org/package/serve-content)
 [![downloads](https://img.shields.io/npm/dm/serve-content.svg)](https://npmjs.org/package/serve-content)
-[![linux](https://img.shields.io/travis/emilioplatzer/serve-content/master.svg)](https://travis-ci.com/emilioplatzer/serve-content)
+[![linux](https://github.com/emilioplatzer/serve-content/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/emilioplatzer/serve-content/actions/workflows/build-and-test.yml)
 [![windows](https://ci.appveyor.com/api/projects/status/github/emilioplatzer/serve-content?svg=true)](https://ci.appveyor.com/project/emilioplatzer/serve-content)
-[![dependencies](https://img.shields.io/david/emilioplatzer/serve-content.svg)](https://david-dm.org/emilioplatzer/serve-content)
+[![coverage](https://img.shields.io/coveralls/emilioplatzer/serve-content/master.svg)](https://coveralls.io/r/emilioplatzer/serve-content)
+[![security](https://socket.dev/api/badge/npm/package/serve-content)](https://socket.dev/npm/package/serve-content)
+[![qa-control](https://github.com/emilioplatzer/serve-content/actions/workflows/qa-control.yml/badge.svg)](https://github.com/emilioplatzer/serve-content/actions/workflows/qa-control.yml)
 
 <!--multilang buttons-->
 
@@ -21,17 +22,17 @@ también disponible en:
 
 ## basado en serve-static
 
-Tiene todo lo que tiene [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme). 
-El módulo *serve-content* agrega un conjunto de [parametros](https://www.npmjs.com/package/serve-static#options) obligatorios 
-para indicar cuáles son las extensiones permitidas (o las excluidas): 
+Tiene todo lo que tiene [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme).
+El módulo *serve-content* agrega un conjunto de [parametros](https://www.npmjs.com/package/serve-static#options) obligatorios
+para indicar cuáles son las extensiones permitidas (o las excluidas):
 
 <!--lang:en--]
 
 ## based on serve-static
 
-All in [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme) is working here. 
-But *serve-content* add some mandatory [parameters](https://www.npmjs.com/package/serve-static#options) 
-to indicate which are the allowed extensions: 
+All in [*serve-static* documentation](https://www.npmjs.com/package/serve-static#readme) is working here.
+But *serve-content* add some mandatory [parameters](https://www.npmjs.com/package/serve-static#options)
+to indicate which are the allowed extensions:
 
 [!--lang:*-->
 
@@ -39,7 +40,7 @@ to indicate which are the allowed extensions:
 
 <!--lang:es-->
 
-*allowedExts* es una lista de extensiones permitidas. 
+*allowedExts* es una lista de extensiones permitidas.
 
 <!--lang:en--]
 
@@ -51,7 +52,7 @@ to indicate which are the allowed extensions:
 
 <!--lang:es-->
 
-*allowAllExts* indica que todas las exensiones se permiten, se puede usar junto con `excludeExts`. 
+*allowAllExts* indica que todas las exensiones se permiten, se puede usar junto con `excludeExts`.
 
 <!--lang:en--]
 
@@ -63,7 +64,7 @@ to indicate which are the allowed extensions:
 
 <!--lang:es-->
 
-*excludeExts* es una lista de extensiones que se ignorarán. 
+*excludeExts* es una lista de extensiones que se ignorarán.
 
 <!--lang:en--]
 
@@ -88,8 +89,8 @@ var app = connect()
 
 // Serve up all folders for images
 app.use(serveContent('/', {
-    extensions: ['html', 'htm'], 
-    index: 'index.html', 
+    extensions: ['html', 'htm'],
+    index: 'index.html',
     allowedExts: ['', 'html', 'htm', 'png', 'jpg', 'jpeg', 'gif']
 })
 
@@ -102,14 +103,14 @@ app.listen(3000)
 ## extensiones por defecto
 
 Para usar el parámetro [extensions](https://www.npmjs.com/package/serve-static#extensions) de *serve-static*
-hay que incluir la cadena vacía ('') in la lista de extensiones (staticExtension). 
+hay que incluir la cadena vacía ('') in la lista de extensiones (staticExtension).
 
 <!--lang:en--]
 
 ## default extensions
 
 For use the *serve-static* [extensions](https://www.npmjs.com/package/serve-static#extensions) parameter
-you must include de empty string ('') in the staticExtension list (as you see in the example). 
+you must include de empty string ('') in the staticExtension list (as you see in the example).
 
 [!--lang:*-->
 
@@ -117,12 +118,12 @@ you must include de empty string ('') in the staticExtension list (as you see in
 
 <!--lang:es-->
 
-*serve-content* también busca las extensiones de "mime types". 
-Se pueden agregar extensiones en el campo mime. 
+*serve-content* también busca las extensiones de "mime types".
+Se pueden agregar extensiones en el campo mime.
 
 <!--lang:en--]
 
-*serve-content* also search the extension in the mime types. 
+*serve-content* also search the extension in the mime types.
 If you need to add a non standard extension you can add it in the mime field
 
 [!--lang:*-->
@@ -139,8 +140,8 @@ var app = connect()
 
 // Serve up all folders for images
 app.use(serveContent('/', {
-    extensions: ['html', 'htm'], 
-    index: 'index.html', 
+    extensions: ['html', 'htm'],
+    index: 'index.html',
     allowedExts: ['', 'html', 'htm', 'png', 'jpg', 'jpeg', 'gif', 'specialimage']
 })
 

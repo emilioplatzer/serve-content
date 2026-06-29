@@ -47,7 +47,7 @@ serveContent = function serveContent(root, options) {
         if(excludeExts.indexOf(ext)!=-1 || (!options.allowAllExts && allowedExts.indexOf(ext)==-1)) return next();
         if(ext && !mime.types[ext]) return next();
         var transformers = serveContent.transformer[ext];
-        var transformers = transformers ? (transformers instanceof Array ? transformers : [transformers]) : [];
+        transformers = transformers ? (transformers instanceof Array ? transformers : [transformers]) : [];
         transformers = transformers.filter(transformer => (typeof miniTools[transformer.name] == "function"));
         return transformers.reduce(function(andThen, transformer){
             var defaultOpts={anyFile:true};
@@ -55,7 +55,7 @@ serveContent = function serveContent(root, options) {
                 defaultOpts.flash = {};
                 if(req.flash instanceof Function){
                     var newFlash = req.flash() || {};
-                    for(var x in newFlash){
+                    for(var x in newFlash){ // eslint-disable-line guard-for-in
                         req.serveContentFlash = newFlash;
                         break;
                     }
