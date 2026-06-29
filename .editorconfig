@@ -1,0 +1,73 @@
+root = true
+
+# Defaults for every file
+[*]
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_style = space
+
+[test/fixtures/.hidden]
+insert_final_newline = false
+
+[test/fixtures/a-jade.jade]
+insert_final_newline = false
+
+[test/fixtures/a-markdown.md]
+insert_final_newline = false
+
+[test/fixtures/a-stylus.css]
+insert_final_newline = false
+
+[test/fixtures/a-stylus.styl]
+insert_final_newline = false
+
+[test/fixtures/a_program.js]
+insert_final_newline = false
+
+[test/fixtures/a_program.php]
+insert_final_newline = false
+
+[test/fixtures/foo bar]
+insert_final_newline = false
+
+[test/fixtures/nums]
+insert_final_newline = false
+
+[test/fixtures/this.specialtext]
+insert_final_newline = false
+
+[test/fixtures/todo.html]
+insert_final_newline = false
+
+[test/fixtures/todo.txt]
+insert_final_newline = false
+
+[test/fixtures/users/index.html]
+insert_final_newline = false
+
+[test/fixtures/users/tobi.txt]
+insert_final_newline = false
+
+[.gitignore]
+insert_final_newline = false
+
+[.jshintrc]
+insert_final_newline = false
+
+[.vscode/settings.json]
+insert_final_newline = false
+
+[example/server.js]
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[serve-content.d.ts]
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[serve-content.js]
+trim_trailing_whitespace = false
+
+[test/test.js]
+insert_final_newline = false
