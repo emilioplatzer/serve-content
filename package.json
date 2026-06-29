@@ -36,7 +36,7 @@
   },
   "scripts": {
     "test": "mocha --reporter spec --bail --check-leaks --globals __core-js_shared__ test/",
-    "test-ci": "node node_modules/nyc/bin/nyc --reporter=lcov --reporter=text-lcov node_modules/mocha/bin/_mocha --exit --check-leaks --globals __core-js_shared__ test/",
+    "test-ci": "node node_modules/nyc/bin/nyc --reporter=lcov --reporter=text node_modules/mocha/bin/_mocha --exit --check-leaks --globals __core-js_shared__ test/",
     "test-cov": "node node_modules/nyc/bin/nyc mocha --exit",
     "x-test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/",
     "x-test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
