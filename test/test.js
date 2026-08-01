@@ -199,6 +199,12 @@ describe('direct test', function(){
     assert.equal(response.statusCode, 200);
     assert.equal(response.outputString, '<p>hello flash</p><pre>first line</pre><pre>second line</pre>');
   });
+  it('should serve jade files when flash returns nothing', async function(){
+    var response = await serve(req({url:'/flash-jade', flash:function flash(){ return null; }}))
+    assert.equal(response.next, null);
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.outputString, '<p>hello flash</p>');
+  });
   it('should serve jade files with flash when found', async function(){
     try{
       await fs.unlink(fixtures+'/local-non-existent-jade.jade')

@@ -65,6 +65,7 @@ serveContent = function serveContent(root, options) {
             if(serveContent.logAll){
                 defaultOpts.trace = traceForDebug;
             }
+            /* istanbul ignore if */
             if (typeof miniTools[transformer.name] !== "function") {
                 console.error('ERROR serve-content miniTools[transformer.name] not found')
                 console.log(transformer)
