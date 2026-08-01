@@ -32,30 +32,30 @@ serveContent = function serveContent(root, options) {
     }
     var whichServeStatic = options.serveStatic ||
         serveStatic(root,changing(options, {
-            allowedExts:undefined, 
-            allowAllExts:undefined, 
-            excludeExts:undefined, 
+            allowedExts:undefined,
+            allowAllExts:undefined,
+            excludeExts:undefined,
         }, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
     root = Path.resolve(root);
     return function servingContent(req, res, next){
-        if(req.method!='GET'){
+        if (req.method !== 'GET') {
             return next();
         }
         var pathname = req.path || parseurl(req).pathname;
         var ext = Path.extname(pathname).replace(/^\.?/,'');
         // ok cuando excludeExts.indexOf(ext)==-1 && (opt.allowAllExts || allowedExts.indexOf(ext)!=-1)
-        if(excludeExts.indexOf(ext)!=-1 || (!options.allowAllExts && allowedExts.indexOf(ext)==-1)) return next();
+        if (excludeExts.indexOf(ext) !== -1 || (!options.allowAllExts && allowedExts.indexOf(ext) === -1)) return next();
         if(ext && !mime.types[ext]) return next();
         var transformers = serveContent.transformer[ext];
         transformers = transformers ? (transformers instanceof Array ? transformers : [transformers]) : [];
-        transformers = transformers.filter(transformer => (typeof miniTools[transformer.name] == "function"));
+        transformers = transformers.filter(transformer => (typeof miniTools[transformer.name] === "function"));
         return transformers.reduce(function(andThen, transformer){
             var defaultOpts={anyFile:true};
             if(transformer.withFlash){
                 defaultOpts.flash = {};
                 if(req.flash instanceof Function){
                     var newFlash = req.flash() || {};
-                    for(var x in newFlash){ // eslint-disable-line guard-for-in
+                    for(var x in newFlash){
                         req.serveContentFlash = newFlash;
                         break;
                     }
@@ -65,7 +65,7 @@ serveContent = function serveContent(root, options) {
             if(serveContent.logAll){
                 defaultOpts.trace = traceForDebug;
             }
-            if (typeof miniTools[transformer.name] != "function") {
+            if (typeof miniTools[transformer.name] !== "function") {
                 console.error('ERROR serve-content miniTools[transformer.name] not found')
                 console.log(transformer)
                 console.log(options)

@@ -7,7 +7,7 @@ var request = require('supertest');
 var serveContent = require('..');
 var ServerResponse = require('http').ServerResponse;
 
-var fixtures = __dirname + '/fixtures';
+var fixtures = path.join(__dirname, 'fixtures');
 var fs = require('fs').promises
 var relative = path.relative(process.cwd(), fixtures);
 
@@ -134,7 +134,7 @@ describe('direct test', function(){
         var res = new Proxy(response, {
           get: function(target, p, receiver){
             // console.log('get res', p)
-            if(p=='end'){
+            if (p === 'end') {
               var endFun = Reflect.get(...arguments);
               return function endWrapped(){
                 var endResult = endFun.apply(this, arguments);
@@ -203,7 +203,7 @@ describe('direct test', function(){
     try{
       await fs.unlink(fixtures+'/local-non-existent-jade.jade')
     }catch(err){
-      if(err.code != 'ENOENT') throw err;
+      if (err.code !== 'ENOENT') throw err;
     }
     var reqWithFlash = req({url:'/local-non-existent-jade', flashContent:{error:['first line','second line']}})
     var next = await serve(reqWithFlash)
@@ -226,7 +226,7 @@ function createServer(dir, opts, fn) {
   var _serve = serveContent(dir, opts);
 
   return http.createServer(function (req, res) {
-    fn && fn(req, res);
+    if (fn) fn(req, res);
     _serve(req, res, function (err) {
       res.statusCode = err ? (err.status || 500) : 404;
       res.end(err ? err.stack : 'sorry!');
