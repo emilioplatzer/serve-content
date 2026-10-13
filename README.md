@@ -7,7 +7,6 @@ serve-content based on file name extensions and serving jade and stylus files
 [![linux](https://github.com/emilioplatzer/serve-content/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/emilioplatzer/serve-content/actions/workflows/build-and-test.yml)
 [![windows](https://ci.appveyor.com/api/projects/status/github/emilioplatzer/serve-content?svg=true)](https://ci.appveyor.com/project/emilioplatzer/serve-content)
 [![coverage](https://img.shields.io/coveralls/emilioplatzer/serve-content/master.svg)](https://coveralls.io/r/emilioplatzer/serve-content)
-[![security](https://socket.dev/api/badge/npm/package/serve-content)](https://socket.dev/npm/package/serve-content)
 [![qa-control](https://github.com/emilioplatzer/serve-content/actions/workflows/qa-control.yml/badge.svg)](https://github.com/emilioplatzer/serve-content/actions/workflows/qa-control.yml)
 
 
