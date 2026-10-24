@@ -6,6 +6,7 @@ declare namespace serveContent {
         allowedExts?: string[];
         allowAllExts?: boolean;
         excludeExts?: string[];
+        allowUnknownExts?: boolean;
         cacheControl?: boolean;
         dotfiles?: string;
         etag?: boolean;
@@ -26,7 +27,7 @@ declare namespace serveContent {
     })&{
         jade?: object
         styl?: object
-        serveStatic?: (root: string, options?: ServeContentOptions) => express.Handler
+        serveStatic?: express.Handler
     }    
     function serveContent(root: string, options: ServeContentOptions): express.Handler;
     var transformer:{

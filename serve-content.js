@@ -9,6 +9,16 @@ var mime = require('mime-types');
 var miniTools = require('mini-tools');
 var changing = require('best-globals').changing;
 
+// same check that send does: a normalized path that goes above the root
+var UP_PATH_REGEXP = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
+
+function httpError(status, message){
+    var err = new Error(message);
+    err.status = status;
+    err.statusCode = status;
+    return err;
+}
+
 function getTraceroute(){
     try{
         throw new Error('aca estamos')
@@ -25,8 +35,13 @@ serveContent = function serveContent(root, options) {
     if (!options.allowedExts && !options.allowAllExts) {
       throw new TypeError('options.allowedExts required')
     }
-    var allowedExts=options.allowedExts||[];
-    var excludeExts=options.excludeExts||[];
+    var allowedExts=(options.allowedExts||[]).map(ext => ext.toLowerCase());
+    var excludeExts=(options.excludeExts||[]).map(ext => ext.toLowerCase());
+    var fallthrough = options.fallthrough !== false;
+    // what to pass to next() when it is not served, as serve-static does
+    function rejection(status, message){
+        return fallthrough ? undefined : httpError(status, 'serve-content: '+message);
+    }
     if(serveContent.logAll){
         traceForDebug = getTraceroute();
     }
@@ -35,17 +50,38 @@ serveContent = function serveContent(root, options) {
             allowedExts:undefined,
             allowAllExts:undefined,
             excludeExts:undefined,
+            allowUnknownExts:undefined,
         }, changing.options({deletingValue:undefined}))); // Can change how to ServeStatic
     root = Path.resolve(root);
     return function servingContent(req, res, next){
-        if (req.method !== 'GET') {
-            return next();
+        if (req.method !== 'GET' && req.method !== 'HEAD') {
+            if (fallthrough) {
+                return next();
+            }
+            // method not allowed, as serve-static does
+            res.statusCode = 405;
+            res.setHeader('Allow', 'GET, HEAD');
+            res.setHeader('Content-Length', '0');
+            return res.end();
         }
-        var pathname = req.path || parseurl(req).pathname;
-        var ext = Path.extname(pathname).replace(/^\.?/,'');
+        var pathname;
+        try{
+            // decoded as serve-static does, so the extension is the one of the file that it will look for
+            pathname = decodeURIComponent(req.path || parseurl(req).pathname);
+        }catch(err){
+            return next(rejection(400, 'malformed URI: '+err.message));
+        }
+        if (UP_PATH_REGEXP.test(Path.normalize('.' + Path.sep + pathname))) {
+            return next(rejection(403, 'path outside root'));
+        }
+        var ext = Path.extname(pathname).replace(/^\.?/,'').toLowerCase();
         // ok cuando excludeExts.indexOf(ext)==-1 && (opt.allowAllExts || allowedExts.indexOf(ext)!=-1)
-        if (excludeExts.indexOf(ext) !== -1 || (!options.allowAllExts && allowedExts.indexOf(ext) === -1)) return next();
-        if(ext && !mime.types[ext]) return next();
+        if (excludeExts.indexOf(ext) !== -1 || (!options.allowAllExts && allowedExts.indexOf(ext) === -1)) {
+            return next(rejection(404, 'extension not allowed'));
+        }
+        if (ext && !options.allowUnknownExts && !mime.types[ext]) {
+            return next(rejection(404, 'unknown extension'));
+        }
         var transformers = serveContent.transformer[ext];
         transformers = transformers ? (transformers instanceof Array ? transformers : [transformers]) : [];
         transformers = transformers.filter(transformer => (typeof miniTools[transformer.name] === "function"));

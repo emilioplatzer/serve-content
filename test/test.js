@@ -67,7 +67,7 @@ describe('test with supertest server', function(){
 
     it('should skip not mimed extensions', function(done){
       request(server)
-      .get('/a_program.php2')
+      .get('/this.specialtext')
       .expect(404, 'sorry!', done);
     });
 
@@ -124,7 +124,131 @@ describe('test with supertest server', function(){
       .expect(200, done);
     });
   })
+  describe('security and serve-static compatibility', function(){
+    var server;
+    var serverExcl;
+    var serverNoFall;
+    var serverUnknown;
+    before(function () {
+      server = createServer(null,{allowedExts:['','html','PNG','specialtext'], extensions:['html']});
+      serverExcl = createServer(null,{allowAllExts:true, excludeExts:['php','js']});
+      serverNoFall = createServer(null,{allowedExts:['','html','specialtext'], fallthrough:false});
+      serverUnknown = createServer(null,{allowedExts:['specialtext'], allowUnknownExts:true});
+    });
+
+    it('should not allow an encoded dot to skip allowedExts', function(done){
+      request(server)
+      .get('/a_program%2Ephp')
+      .expect(404, 'sorry!', done);
+    });
+
+    it('should not allow an encoded dot to skip excludeExts', function(done){
+      request(serverExcl)
+      .get('/a_program%2ejs')
+      .expect(404, 'sorry!', done);
+    });
+
+    it('should compare extensions case insensitive', function(done){
+      request(serverExcl)
+      .get('/a_program.PHP')
+      .expect(404, 'sorry!', done);
+    });
+
+    it('should compare allowedExts case insensitive', function(done){
+      request(server)
+      .get('/ok.png')
+      .expect('Content-Type', 'image/png')
+      .expect(200, done);
+    });
+
+    it('should serve allowed extensions not in mime types with allowUnknownExts, as serve-static does', function(done){
+      request(serverUnknown)
+      .get('/this.specialtext')
+      .expect('Content-Type', 'application/octet-stream')
+      .expect(200, done);
+    });
+
+    it('should skip not mimed extensions with allowAllExts', function(done){
+      request(serverExcl)
+      .get('/this.specialtext')
+      .expect(404, 'sorry!', done);
+    });
+
+    it('should reject not mimed extensions without fallthrough', function(done){
+      request(serverNoFall)
+      .get('/this.specialtext')
+      .expect(404, /unknown extension/, done);
+    });
+
+    it('should serve HEAD requests', function(done){
+      request(server)
+      .head('/todo.html')
+      .expect('Content-Type', /html/)
+      .expect(200, done);
+    });
+
+    it('should serve HEAD requests of jade files', function(done){
+      request(server)
+      .head('/a-jade')
+      .expect('Content-Type', /html/)
+      .expect(200, done);
+    });
+
+    it('should reject POST requests without fallthrough', function(done){
+      request(serverNoFall)
+      .post('/todo.html')
+      .expect('Allow', 'GET, HEAD')
+      .expect(405, done);
+    });
+
+    it('should reject not allowed extensions without fallthrough', function(done){
+      request(serverNoFall)
+      .get('/a_program.php')
+      .expect(404, /extension not allowed/, done);
+    });
+
+    it('should skip malformed URIs', function(done){
+      request(server)
+      .get('/%E0%A4%A')
+      .expect(404, 'sorry!', done);
+    });
+
+    it('should reject malformed URIs without fallthrough', function(done){
+      request(serverNoFall)
+      .get('/%E0%A4%A')
+      .expect(400, /malformed URI/, done);
+    });
+
+    it('should not serve jade files outside root', async function(){
+      var response = await rawGet(createServer(path.join(fixtures, 'users'), {allowedExts:['']}), '/../a-jade');
+      assert.equal(response.statusCode, 404);
+      assert.equal(response.body, 'sorry!');
+    });
+
+    it('should reject paths outside root without fallthrough', async function(){
+      var response = await rawGet(createServer(path.join(fixtures, 'users'), {allowedExts:[''], fallthrough:false}), '/../a-jade');
+      assert.equal(response.statusCode, 403);
+      assert.match(response.body, /path outside root/);
+    });
+  })
 });
+
+// supertest normalizes the "..", this sends the path as is
+function rawGet(server, urlPath){
+  return new Promise(function(resolve, reject){
+    server.listen(0, function(){
+      var req = http.request({port:server.address().port, path:urlPath, method:'GET'}, function(res){
+        var body = '';
+        res.setEncoding('utf8');
+        res.on('data', function(chunk){ body += chunk; });
+        res.on('error', function(err){ server.close(); reject(err); });
+        res.on('end', function(){ server.close(); resolve({statusCode:res.statusCode, body:body}); });
+      });
+      req.on('error', function(err){ server.close(); reject(err); });
+      req.end();
+    });
+  });
+}
 
 describe('direct test', function(){
   async function serve(req){
