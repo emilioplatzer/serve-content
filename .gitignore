@@ -39,4 +39,4 @@ jspm_packages
 local-*
 *-local.*
 
-.claude/settings.json
+.claude/

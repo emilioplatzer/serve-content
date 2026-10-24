@@ -55,7 +55,7 @@ serveContent = function serveContent(root, options) {
                 defaultOpts.flash = {};
                 if(req.flash instanceof Function){
                     var newFlash = req.flash() || {};
-                    for(var x in newFlash){
+                    for(var x in newFlash){ // eslint-disable-line no-unreachable-loop -- it only checks if newFlash has any enumerable property (inherited ones included)
                         req.serveContentFlash = newFlash;
                         break;
                     }

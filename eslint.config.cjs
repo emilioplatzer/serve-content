@@ -36,6 +36,7 @@ module.exports = [
             "no-sparse-arrays": 2,
             "no-unexpected-multiline": 2,
             "no-unreachable": 2,
+            "no-unreachable-loop": 2,
             "use-isnan": 2,
             "valid-typeof": 2,
 
